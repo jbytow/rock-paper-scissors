@@ -5,6 +5,9 @@ import java.awt.*;
 import java.util.Random;
 
 public class RockPaperScissorsGUI {
+    private static int wins = 0;
+    private static int losses = 0;
+    private static int ties = 0;
 
     // Main method to start the application
     public static void main(String[] args) {
@@ -56,14 +59,18 @@ public class RockPaperScissorsGUI {
         String result;
         if (playerMove.equals(computerMove)) {
             result = "It's a tie!";
+            ties++;
         } else if ((playerMove.equals("rock") && computerMove.equals("scissors")) ||
                 (playerMove.equals("paper") && computerMove.equals("rock")) ||
                 (playerMove.equals("scissors") && computerMove.equals("paper"))) {
             result = "You win!";
+            wins++;
         } else {
             result = "You lose!";
+            losses++;
         }
 
         textArea.append("You chose " + playerMove + ", computer chose " + computerMove + ". " + result + "\n");
+        textArea.append("Wins: " + wins + ", Losses: " + losses + ", Ties: " + ties + "\n");
     }
 }
