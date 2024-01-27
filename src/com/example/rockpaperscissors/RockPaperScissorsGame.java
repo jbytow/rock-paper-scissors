@@ -2,7 +2,7 @@ package com.example.rockpaperscissors;
 
 import java.util.Random;
 
-public class RockPaperScissorsApp {
+public class RockPaperScissorsGame {
     private int wins = 0;
     private int losses = 0;
     private int ties = 0;

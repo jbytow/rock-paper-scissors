@@ -2,20 +2,15 @@ package com.example.rockpaperscissors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 public class RockPaperScissorsGUI {
-    private RockPaperScissorsApp gameApp;
+    private RockPaperScissorsGame gameApp;
 
-    public RockPaperScissorsGUI() {
-        gameApp = new RockPaperScissorsApp();
+    public RockPaperScissorsGUI(RockPaperScissorsGame gameApp) {
+        this.gameApp = gameApp;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new RockPaperScissorsGUI().createAndShowGUI());
-    }
-
-    private void createAndShowGUI() {
+    public void createAndShowGUI() {
         JFrame frame = new JFrame("Rock, Paper, Scissors Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
