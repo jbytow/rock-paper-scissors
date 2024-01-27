@@ -5,22 +5,21 @@ import java.awt.*;
 import java.util.Random;
 
 public class RockPaperScissorsGUI {
-    private static int wins = 0;
-    private static int losses = 0;
-    private static int ties = 0;
+    private RockPaperScissorsApp gameApp;
 
-    // Main method to start the application
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+    public RockPaperScissorsGUI() {
+        gameApp = new RockPaperScissorsApp();
     }
 
-    // Method to create and show the GUI
-    private static void createAndShowGUI() {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new RockPaperScissorsGUI().createAndShowGUI());
+    }
+
+    private void createAndShowGUI() {
         JFrame frame = new JFrame("Rock, Paper, Scissors Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
 
-        // Layout for buttons
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
@@ -28,49 +27,25 @@ public class RockPaperScissorsGUI {
         JButton paperButton = new JButton("Paper");
         JButton scissorsButton = new JButton("Scissors");
 
-        // Text area to display results
         JTextArea textArea = new JTextArea(5, 20);
         textArea.setEditable(false);
 
-        // Adding action listeners to buttons
         rockButton.addActionListener(e -> playGame("rock", textArea));
         paperButton.addActionListener(e -> playGame("paper", textArea));
         scissorsButton.addActionListener(e -> playGame("scissors", textArea));
 
-        // Adding buttons to the panel
         panel.add(rockButton);
         panel.add(paperButton);
         panel.add(scissorsButton);
 
-        // Adding panel and text area to frame
         frame.getContentPane().add(panel, BorderLayout.NORTH);
         frame.getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        // Display the window.
         frame.setVisible(true);
     }
 
-    // Method to play the game
-    private static void playGame(String playerMove, JTextArea textArea) {
-        String[] rps = {"rock", "paper", "scissors"};
-        Random random = new Random();
-        String computerMove = rps[random.nextInt(rps.length)];
-
-        String result;
-        if (playerMove.equals(computerMove)) {
-            result = "It's a tie!";
-            ties++;
-        } else if ((playerMove.equals("rock") && computerMove.equals("scissors")) ||
-                (playerMove.equals("paper") && computerMove.equals("rock")) ||
-                (playerMove.equals("scissors") && computerMove.equals("paper"))) {
-            result = "You win!";
-            wins++;
-        } else {
-            result = "You lose!";
-            losses++;
-        }
-
-        textArea.append("You chose " + playerMove + ", computer chose " + computerMove + ". " + result + "\n");
-        textArea.append("Wins: " + wins + ", Losses: " + losses + ", Ties: " + ties + "\n");
+    private void playGame(String playerMove, JTextArea textArea) {
+        String result = gameApp.playGame(playerMove);
+        textArea.append(result);
     }
 }
