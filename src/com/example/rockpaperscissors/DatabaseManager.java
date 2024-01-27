@@ -8,22 +8,26 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:sqlite:database/rockpaperscissors.db"; // database path
+    private Connection connection;
 
     public DatabaseManager() {
-        initializeDatabase();
+        connection = initializeDatabase();
         createTable();
     }
 
-    private void initializeDatabase() {
-        try (Connection conn = DriverManager.getConnection(URL)) {
+    private Connection initializeDatabase() {
+        try {
+            Connection conn = DriverManager.getConnection(URL);
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("Driver name: " + meta.getDriverName());
                 System.out.println("Database connection has been established.");
+                return conn;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return null;
     }
 
     private void createTable() {
@@ -43,5 +47,8 @@ public class DatabaseManager {
         }
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
 
 }
