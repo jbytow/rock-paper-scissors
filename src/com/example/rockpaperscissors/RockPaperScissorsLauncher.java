@@ -8,8 +8,10 @@ public class RockPaperScissorsLauncher {
     }
 
     private void runGame() {
-        RockPaperScissorsGame gameApp = new RockPaperScissorsGame();
-        RockPaperScissorsGUI gui = new RockPaperScissorsGUI(gameApp);
-        gui.createAndShowGUI();
+        DatabaseManager dbManager = new DatabaseManager();
+        ProfileManager profileManager = new ProfileManager(dbManager.getConnection());
+
+        RockPaperScissorsGame gameApp = new RockPaperScissorsGame(profileManager);
+        RockPaperScissorsGUI gui = new RockPaperScissorsGUI(gameApp, profileManager);
     }
 }

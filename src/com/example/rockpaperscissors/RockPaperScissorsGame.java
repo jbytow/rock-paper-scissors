@@ -7,10 +7,41 @@ public class RockPaperScissorsGame {
     private int losses = 0;
     private int ties = 0;
 
+    private ProfileManager profileManager;
+    private PlayerProfile activeProfile;
+
+    public RockPaperScissorsGame(ProfileManager profileManager) {
+        this.profileManager = profileManager;
+    }
+
+    public void setActiveProfile(PlayerProfile profile) {
+        this.activeProfile = profile;
+        // Setting local variables based on the profile
+        if (profile != null) {
+            wins = profile.getWins();
+            losses = profile.getLosses();
+            ties = profile.getTies();
+        }
+    }
+
     public String playGame(String playerMoveString) {
         Move playerMove = Move.fromString(playerMoveString);
         Move computerMove = getRandomMove();
         String result = determineWinner(playerMove, computerMove);
+
+        // Update profile statistics
+        if (activeProfile != null) {
+            if (result.equals("You win!")) {
+                profileManager.updateWins(activeProfile.getId());
+                activeProfile.setWins(activeProfile.getWins() + 1);
+            } else if (result.equals("You lose!")) {
+                profileManager.updateLosses(activeProfile.getId());
+                activeProfile.setLosses(activeProfile.getLosses() + 1);
+            } else if (result.equals("It's a tie!")) {
+                profileManager.updateTies(activeProfile.getId());
+                activeProfile.setTies(activeProfile.getTies() + 1);
+            }
+        }
 
         return "You chose " + playerMove + ", computer chose " + computerMove + ". " + result + "\n" +
                 "Wins: " + wins + ", Losses: " + losses + ", Ties: " + ties + "\n";
