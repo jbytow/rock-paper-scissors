@@ -25,9 +25,9 @@ public class RockPaperScissorsGUI {
         JTextArea textArea = new JTextArea(5, 20);
         textArea.setEditable(false);
 
-        rockButton.addActionListener(e -> playGame("rock", textArea));
-        paperButton.addActionListener(e -> playGame("paper", textArea));
-        scissorsButton.addActionListener(e -> playGame("scissors", textArea));
+        rockButton.addActionListener(e -> playGame(Move.ROCK, textArea));
+        paperButton.addActionListener(e -> playGame(Move.PAPER, textArea));
+        scissorsButton.addActionListener(e -> playGame(Move.SCISSORS, textArea));
 
         panel.add(rockButton);
         panel.add(paperButton);
@@ -39,8 +39,8 @@ public class RockPaperScissorsGUI {
         frame.setVisible(true);
     }
 
-    private void playGame(String playerMove, JTextArea textArea) {
-        String result = gameApp.playGame(playerMove);
+    private void playGame(Move playerMove, JTextArea textArea) {
+        String result = gameApp.playGame(playerMove.name().toLowerCase());
         textArea.append(result);
     }
 }
