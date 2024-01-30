@@ -17,6 +17,7 @@ public class DatabaseManager {
 
     private Connection initializeDatabase() {
         try {
+            Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(URL);
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
@@ -24,26 +25,37 @@ public class DatabaseManager {
                 System.out.println("Database connection has been established.");
                 return conn;
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     private void createTable() {
-        // sql new table creation
-        String sql = "CREATE TABLE IF NOT EXISTS results (\n"
+        String sqlCreateResults = "CREATE TABLE IF NOT EXISTS results (\n"
                 + " id integer PRIMARY KEY,\n"
+                + " profile_id integer,\n"
                 + " playerMove text NOT NULL,\n"
                 + " computerMove text NOT NULL,\n"
-                + " outcome text NOT NULL\n"
+                + " outcome text NOT NULL,\n"
+                + " FOREIGN KEY (profile_id) REFERENCES profiles(id)\n"
                 + ");";
 
-        try (Connection conn = DriverManager.getConnection(URL);
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
+        String sqlCreateProfiles = "CREATE TABLE IF NOT EXISTS profiles (\n"
+                + " id integer PRIMARY KEY,\n"
+                + " username text NOT NULL,\n"
+                + " wins integer NOT NULL DEFAULT 0,\n"
+                + " losses integer NOT NULL DEFAULT 0,\n"
+                + " ties integer NOT NULL DEFAULT 0\n"
+                + ");";
+
+        try (Statement stmt = connection.createStatement()) {
+            // create results table
+            stmt.execute(sqlCreateResults);
+            // create profiles table
+            stmt.execute(sqlCreateProfiles);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error during table creation: " + e.getMessage());
         }
     }
 

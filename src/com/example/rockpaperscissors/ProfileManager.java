@@ -54,6 +54,26 @@ public class ProfileManager {
         return null;
     }
 
+    public PlayerProfile selectProfileByName(String name) {
+        String sql = "SELECT * FROM profiles WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new PlayerProfile(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getInt("wins"),
+                        rs.getInt("losses"),
+                        rs.getInt("ties")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Error during profile selection by name: " + e.getMessage());
+        }
+        return null;
+    }
+
     public List<PlayerProfile> getProfiles() {
         List<PlayerProfile> profiles = new ArrayList<>();
         String sql = "SELECT * FROM profiles";

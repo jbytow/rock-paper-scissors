@@ -2,6 +2,7 @@ package com.example.rockpaperscissors;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RockPaperScissorsGUI {
@@ -49,25 +50,38 @@ public class RockPaperScissorsGUI {
 
     private void selectProfile() {
         List<PlayerProfile> profiles = profileManager.getProfiles();
-        PlayerProfile selectedProfile = null;
+        PlayerProfile createNewProfileOption = new PlayerProfile(-1, "Create new profile", 0, 0, 0);
+        profiles.add(createNewProfileOption);
 
-        if (profiles != null && !profiles.isEmpty()) {
-            Object[] profileOptions = profiles.toArray();
-            selectedProfile = (PlayerProfile) JOptionPane.showInputDialog(
-                    null,
-                    "Select Your Profile:",
-                    "Profile Selection",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    profileOptions,
-                    profileOptions[0]
-            );
-        }
+        PlayerProfile selectedProfile = (PlayerProfile) JOptionPane.showInputDialog(
+                null,
+                "Select Your Profile:",
+                "Profile Selection",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                profiles.toArray(),
+                profiles.get(0)
+        );
 
-        if (selectedProfile != null) {
+        if (selectedProfile == createNewProfileOption) {
+            PlayerProfile newProfile = createNewProfile();
+            if (newProfile != null) {
+                gameApp.setActiveProfile(newProfile);
+                textArea.append("Profile Created: " + newProfile.getUsername() + "\n");
+            }
+            selectProfile(); // Reopen the profile selection dialog
+        } else if (selectedProfile != null) {
             gameApp.setActiveProfile(selectedProfile);
             textArea.append("Profile Selected: " + selectedProfile.getUsername() + "\n");
         }
+    }
+    private PlayerProfile createNewProfile() {
+        String username = JOptionPane.showInputDialog("Enter new profile name:");
+        if (username != null && !username.trim().isEmpty()) {
+            profileManager.createProfile(username);
+            return profileManager.selectProfileByName(username);
+        }
+        return null;
     }
 
     private void playGame(String playerMove) {

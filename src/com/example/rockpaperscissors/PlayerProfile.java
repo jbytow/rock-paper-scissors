@@ -70,4 +70,9 @@ public class PlayerProfile {
     public double getTiePercentage() {
         return (double) ties / getTotalGames() * 100;
     }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
 }
