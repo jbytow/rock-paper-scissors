@@ -64,45 +64,83 @@ public class RockPaperScissorsGUI extends JFrame {
         PlayerProfile[] profileArray = profiles.toArray(new PlayerProfile[0]);
         JComboBox<PlayerProfile> comboBox = new JComboBox<>(profileArray);
 
-        JButton leaderboardButton = new JButton("Leaderboard");
-        leaderboardButton.addActionListener(e -> {
-            displayLeaderboard(); // Display leaderboard within the same window
-        });
+        // Create buttons for actions
+        JButton selectButton = new JButton("Select");
+        JButton createNewButton = new JButton("Create New");
+        JButton deleteButton = new JButton("Delete");
+        JButton cancelButton = new JButton("Cancel");
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1)); // Set panel layout to four rows
-        panel.add(comboBox);
-        panel.add(leaderboardButton);
-
-        int result = JOptionPane.showOptionDialog(
-                null,
-                panel,
-                "Select, Create, or Delete Profile",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new String[]{"Select", "Create New", "Delete", "Cancel"},
-                "Select");
-
-        if (result == JOptionPane.YES_OPTION) {
+        // Listener for the "Select" button
+        selectButton.addActionListener(e -> {
             PlayerProfile selectedProfile = (PlayerProfile) comboBox.getSelectedItem();
             if (selectedProfile != null) {
                 gameApp.setActiveProfile(selectedProfile);
                 textArea.append("Profile Selected: " + selectedProfile.getUsername() + "\n");
             }
-        } else if (result == JOptionPane.NO_OPTION) {
+        });
+
+        // Listener for the "Create New" button
+        createNewButton.addActionListener(e -> {
             PlayerProfile newProfile = createNewProfile();
             if (newProfile != null) {
                 gameApp.setActiveProfile(newProfile);
                 textArea.append("Profile Created: " + newProfile.getUsername() + "\n");
+                Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
+                if (window instanceof Dialog) {
+                    window.dispose();
+                }
+                selectProfile();
             }
-            selectProfile(); // Open window after profile creation
-        } else if (result == JOptionPane.CANCEL_OPTION) {
+        });
+
+        // Listener for the "Delete" button
+        deleteButton.addActionListener(e -> {
             deleteProfile();
-            selectProfile(); // Open window after profile deleted
-        } else {
-            System.exit(0); // Close the app when the user cancels
+            Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
+            if (window instanceof Dialog) {
+                window.dispose();
+            }
+            selectProfile();
+        });
+
+        // Listener for the "Cancel" button
+        cancelButton.addActionListener(e -> System.exit(0));
+
+        JButton leaderboardButton = new JButton("Leaderboard");
+        leaderboardButton.addActionListener(e -> displayLeaderboard());
+
+        // Panel for the leaderboard button with some spacing
+        JPanel leaderboardPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 5));
+        leaderboardPanel.add(leaderboardButton);
+
+        // Panel for the action buttons without vertical spacing
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonsPanel.add(selectButton);
+        buttonsPanel.add(createNewButton);
+        buttonsPanel.add(deleteButton);
+        buttonsPanel.add(cancelButton);
+
+        // Main panel with GridLayout to structure the layout
+        JPanel mainPanel = new JPanel(new GridLayout(4, 1, 0, 5)); // 4 rows, 1 column, no hgap, 5 vgap
+        mainPanel.add(comboBox);
+        mainPanel.add(leaderboardPanel);
+        mainPanel.add(buttonsPanel);
+
+        // Display the profile selection dialog
+        int result = JOptionPane.showOptionDialog(
+                null,
+                mainPanel,
+                "Select, Create, or Delete Profile",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[] {}, // Pass an empty array to prevent the default buttons from showing
+                null);
+
+        if (result == JOptionPane.CLOSED_OPTION) {
+            // Handle the case where the dialog is closed without an option being chosen
         }
+        // No further action is taken here since the action listeners will handle it
     }
     private PlayerProfile createNewProfile() {
         String username;
@@ -149,12 +187,15 @@ public class RockPaperScissorsGUI extends JFrame {
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         for (PlayerProfile profile : profiles) {
+            double winPercentage = profile.getWinPercentage();
+            String winPercentageText = (Double.isNaN(winPercentage) ? "0.00" : String.format("%.2f", winPercentage)) + "%";
+
             Object[] row = {
                     profile.getUsername(),
                     profile.getWins(),
                     profile.getLosses(),
                     profile.getTies(),
-                    String.format("%.2f%%", profile.getWinPercentage())
+                    winPercentageText
             };
             model.addRow(row);
         }
