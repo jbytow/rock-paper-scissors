@@ -9,46 +9,17 @@ public class RockPaperScissorsGUI extends JFrame {
     private RockPaperScissorsGame gameApp;
     private JTextArea textArea;
     private ProfileManager profileManager;
+    // Constructor initializes the game and profile manager, and sets up the main menu
 
     public RockPaperScissorsGUI(RockPaperScissorsGame gameApp, ProfileManager profileManager) {
         this.gameApp = gameApp;
         this.profileManager = profileManager;
-        createAndShowGUI();
-    }
-
-    private void createAndShowGUI() {
-        setTitle("Rock, Paper, Scissors Game");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-
-        JButton rockButton = new JButton("Rock");
-        JButton paperButton = new JButton("Paper");
-        JButton scissorsButton = new JButton("Scissors");
-
         textArea = new JTextArea(5, 20);
         textArea.setEditable(false);
-
-        rockButton.addActionListener(e -> playGame("rock"));
-        paperButton.addActionListener(e -> playGame("paper"));
-        scissorsButton.addActionListener(e -> playGame("scissors"));
-
-        panel.add(rockButton);
-        panel.add(paperButton);
-        panel.add(scissorsButton);
-
-        getContentPane().add(panel, BorderLayout.NORTH);
-        getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
-
-        // Select a profile before showing the GUI
-        selectProfile();
-
-        setVisible(true);
+        mainMenu(); // Start by displaying the main menu
     }
 
-    private void selectProfile() {
+    private void mainMenu() {
         List<PlayerProfile> profiles = profileManager.getProfiles();
 
         if (profiles == null || profiles.isEmpty()) {
@@ -56,7 +27,7 @@ public class RockPaperScissorsGUI extends JFrame {
             if (newProfile != null) {
                 gameApp.setActiveProfile(newProfile);
                 textArea.append("Profile Created: " + newProfile.getUsername() + "\n");
-                selectProfile(); // Reopen profile selection window
+                mainMenu(); // Reopen profile selection window
             }
             return; // Close if there are no profiles and the user doesn't create one
         }
@@ -76,6 +47,11 @@ public class RockPaperScissorsGUI extends JFrame {
             if (selectedProfile != null) {
                 gameApp.setActiveProfile(selectedProfile);
                 textArea.append("Profile Selected: " + selectedProfile.getUsername() + "\n");
+                Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
+                if (window instanceof JDialog) {
+                    window.dispose();
+                }
+                initializeGameGUI();
             }
         });
 
@@ -89,7 +65,7 @@ public class RockPaperScissorsGUI extends JFrame {
                 if (window instanceof Dialog) {
                     window.dispose();
                 }
-                selectProfile();
+                mainMenu();
             }
         });
 
@@ -100,7 +76,7 @@ public class RockPaperScissorsGUI extends JFrame {
             if (window instanceof Dialog) {
                 window.dispose();
             }
-            selectProfile();
+            mainMenu();
         });
 
         // Listener for the "Cancel" button
@@ -215,6 +191,32 @@ public class RockPaperScissorsGUI extends JFrame {
         leaderboardDialog.pack();
         leaderboardDialog.setLocationRelativeTo(null); // Center on screen
         leaderboardDialog.setVisible(true);
+    }
+
+    private void initializeGameGUI() {
+        setTitle("Rock, Paper, Scissors Game");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        JButton rockButton = new JButton("Rock");
+        JButton paperButton = new JButton("Paper");
+        JButton scissorsButton = new JButton("Scissors");
+
+        rockButton.addActionListener(e -> playGame("rock"));
+        paperButton.addActionListener(e -> playGame("paper"));
+        scissorsButton.addActionListener(e -> playGame("scissors"));
+
+        panel.add(rockButton);
+        panel.add(paperButton);
+        panel.add(scissorsButton);
+
+        getContentPane().add(panel, BorderLayout.NORTH);
+        getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
+
+        setVisible(true);
     }
 
     private void playGame(String playerMove) {
