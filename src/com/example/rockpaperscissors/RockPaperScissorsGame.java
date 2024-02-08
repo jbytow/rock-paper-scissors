@@ -7,7 +7,7 @@ public class RockPaperScissorsGame {
     private int losses = 0;
     private int ties = 0;
 
-    private ProfileManager profileManager;
+    private final ProfileManager profileManager;
     private PlayerProfile activeProfile;
 
     public RockPaperScissorsGame(ProfileManager profileManager) {
@@ -31,15 +31,19 @@ public class RockPaperScissorsGame {
 
         // Update profile statistics
         if (activeProfile != null) {
-            if (result.equals("You win!")) {
-                profileManager.updateWins(activeProfile.getId());
-                activeProfile.setWins(activeProfile.getWins() + 1);
-            } else if (result.equals("You lose!")) {
-                profileManager.updateLosses(activeProfile.getId());
-                activeProfile.setLosses(activeProfile.getLosses() + 1);
-            } else if (result.equals("It's a tie!")) {
-                profileManager.updateTies(activeProfile.getId());
-                activeProfile.setTies(activeProfile.getTies() + 1);
+            switch (result) {
+                case "You win!" -> {
+                    profileManager.updateWins(activeProfile.getId());
+                    activeProfile.setWins(activeProfile.getWins() + 1);
+                }
+                case "You lose!" -> {
+                    profileManager.updateLosses(activeProfile.getId());
+                    activeProfile.setLosses(activeProfile.getLosses() + 1);
+                }
+                case "It's a tie!" -> {
+                    profileManager.updateTies(activeProfile.getId());
+                    activeProfile.setTies(activeProfile.getTies() + 1);
+                }
             }
         }
 
@@ -53,21 +57,12 @@ public class RockPaperScissorsGame {
     }
 
     private String determineWinner(Move playerMove, Move computerMove) {
-        if (playerMove == computerMove) {
-            ties++;
-            return "It's a tie!";
-        }
-
-        switch (playerMove) {
-            case ROCK:
-                return (computerMove == Move.SCISSORS) ? win() : lose();
-            case PAPER:
-                return (computerMove == Move.ROCK) ? win() : lose();
-            case SCISSORS:
-                return (computerMove == Move.PAPER) ? win() : lose();
-            default:
-                throw new IllegalStateException("Unexpected value: " + playerMove);
-        }
+        return switch (playerMove) {
+            case ROCK -> (computerMove == Move.SCISSORS) ? win() : lose();
+            case PAPER -> (computerMove == Move.ROCK) ? win() : lose();
+            case SCISSORS -> (computerMove == Move.PAPER) ? win() : lose();
+            default -> throw new IllegalStateException("Unexpected value: " + playerMove);
+        };
     }
 
     private String win() {

@@ -6,9 +6,9 @@ import java.awt.*;
 import java.util.List;
 
 public class RockPaperScissorsGUI extends JFrame {
-    private RockPaperScissorsGame gameApp;
-    private JTextArea textArea;
-    private ProfileManager profileManager;
+    private final RockPaperScissorsGame gameApp;
+    private final JTextArea textArea;
+    private final ProfileManager profileManager;
     // Constructor initializes the game and profile manager, and sets up the main menu
 
     public RockPaperScissorsGUI(RockPaperScissorsGame gameApp, ProfileManager profileManager) {

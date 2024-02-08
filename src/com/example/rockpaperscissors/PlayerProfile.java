@@ -1,8 +1,8 @@
 package com.example.rockpaperscissors;
 
 public class PlayerProfile {
-    private int id;
-    private String username;
+    private final int id;
+    private final String username;
     private int wins;
     private int losses;
     private int ties;
@@ -19,16 +19,8 @@ public class PlayerProfile {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public int getWins() {
@@ -61,14 +53,6 @@ public class PlayerProfile {
 
     public double getWinPercentage() {
         return (double) wins / getTotalGames() * 100;
-    }
-
-    public double getLossPercentage() {
-        return (double) losses / getTotalGames() * 100;
-    }
-
-    public double getTiePercentage() {
-        return (double) ties / getTotalGames() * 100;
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileManager {
-    private Connection connection;
+    private final Connection connection;
 
     public ProfileManager(Connection connection) {
         this.connection = connection;
@@ -31,27 +31,6 @@ public class ProfileManager {
         } catch (SQLException e) {
             System.out.println("Error during profile removal: " + e.getMessage());
         }
-    }
-
-    public PlayerProfile selectProfile(int id) {
-        String sql = "SELECT * FROM profiles WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return new PlayerProfile(
-                            rs.getInt("id"),
-                            rs.getString("username"),
-                            rs.getInt("wins"),
-                            rs.getInt("losses"),
-                            rs.getInt("ties")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error during profile selection: " + e.getMessage());
-        }
-        return null;
     }
 
     public PlayerProfile selectProfileByName(String name) {

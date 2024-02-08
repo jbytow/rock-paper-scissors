@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:sqlite:database/rockpaperscissors.db"; // database path
-    private Connection connection;
+    private final Connection connection;
 
     public DatabaseManager() {
         connection = initializeDatabase();
@@ -32,22 +32,24 @@ public class DatabaseManager {
     }
 
     private void createTable() {
-        String sqlCreateResults = "CREATE TABLE IF NOT EXISTS results (\n"
-                + " id integer PRIMARY KEY,\n"
-                + " profile_id integer,\n"
-                + " playerMove text NOT NULL,\n"
-                + " computerMove text NOT NULL,\n"
-                + " outcome text NOT NULL,\n"
-                + " FOREIGN KEY (profile_id) REFERENCES profiles(id)\n"
-                + ");";
+        String sqlCreateResults = """
+                CREATE TABLE IF NOT EXISTS results (
+                 id integer PRIMARY KEY,
+                 profile_id integer,
+                 playerMove text NOT NULL,
+                 computerMove text NOT NULL,
+                 outcome text NOT NULL,
+                 FOREIGN KEY (profile_id) REFERENCES profiles(id)
+                );""";
 
-        String sqlCreateProfiles = "CREATE TABLE IF NOT EXISTS profiles (\n"
-                + " id integer PRIMARY KEY,\n"
-                + " username text NOT NULL,\n"
-                + " wins integer NOT NULL DEFAULT 0,\n"
-                + " losses integer NOT NULL DEFAULT 0,\n"
-                + " ties integer NOT NULL DEFAULT 0\n"
-                + ");";
+        String sqlCreateProfiles = """
+                CREATE TABLE IF NOT EXISTS profiles (
+                 id integer PRIMARY KEY,
+                 username text NOT NULL,
+                 wins integer NOT NULL DEFAULT 0,
+                 losses integer NOT NULL DEFAULT 0,
+                 ties integer NOT NULL DEFAULT 0
+                );""";
 
         try (Statement stmt = connection.createStatement()) {
             // create results table
