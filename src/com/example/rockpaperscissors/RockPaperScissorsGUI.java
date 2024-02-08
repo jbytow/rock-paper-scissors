@@ -194,9 +194,10 @@ public class RockPaperScissorsGUI extends JFrame {
     }
 
     private void initializeGameGUI() {
+        textArea.setText("");
         setTitle("Rock, Paper, Scissors Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
+        setSize(400, 600);
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
@@ -204,14 +205,20 @@ public class RockPaperScissorsGUI extends JFrame {
         JButton rockButton = new JButton("Rock");
         JButton paperButton = new JButton("Paper");
         JButton scissorsButton = new JButton("Scissors");
+        JButton backButton = new JButton("Back to Main Menu"); // Add a back button
 
         rockButton.addActionListener(e -> playGame("rock"));
         paperButton.addActionListener(e -> playGame("paper"));
         scissorsButton.addActionListener(e -> playGame("scissors"));
+        backButton.addActionListener(e -> {
+            this.setVisible(false); // Hide the game window
+            mainMenu(); // Show the main menu again
+        });
 
         panel.add(rockButton);
         panel.add(paperButton);
         panel.add(scissorsButton);
+        panel.add(backButton); // Add the back button to the panel
 
         getContentPane().add(panel, BorderLayout.NORTH);
         getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
