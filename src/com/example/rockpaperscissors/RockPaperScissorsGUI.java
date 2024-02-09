@@ -9,6 +9,8 @@ public class RockPaperScissorsGUI extends JFrame {
     private final RockPaperScissorsGame gameApp;
     private final JTextArea textArea;
     private final ProfileManager profileManager;
+    private final JLabel statusMessageLabel;
+    private final JComboBox<PlayerProfile> comboBox;
     // Constructor initializes the game and profile manager, and sets up the main menu
 
     public RockPaperScissorsGUI(RockPaperScissorsGame gameApp, ProfileManager profileManager) {
@@ -16,26 +18,17 @@ public class RockPaperScissorsGUI extends JFrame {
         this.profileManager = profileManager;
         textArea = new JTextArea(5, 20);
         textArea.setEditable(false);
+        statusMessageLabel = new JLabel();
+        statusMessageLabel.setHorizontalAlignment(JLabel.CENTER);
+        comboBox = new JComboBox<>();
         mainMenu(); // Start by displaying the main menu
     }
 
     private void mainMenu() {
-        List<PlayerProfile> profiles = profileManager.getProfiles();
-
-        if (profiles == null || profiles.isEmpty()) {
-            PlayerProfile newProfile = createNewProfile();
-            if (newProfile != null) {
-                gameApp.setActiveProfile(newProfile);
-                textArea.append("Profile Created: " + newProfile.getUsername() + "\n");
-                mainMenu(); // Reopen profile selection window
-            }
-            return; // Close if there are no profiles and the user doesn't create one
-        }
-
-        PlayerProfile[] profileArray = profiles.toArray(new PlayerProfile[0]);
-        JComboBox<PlayerProfile> comboBox = new JComboBox<>(profileArray);
+        updateProfilesList();
 
         // Create buttons for actions
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         JButton selectButton = new JButton("Select");
         JButton createNewButton = new JButton("Create New");
         JButton deleteButton = new JButton("Delete");
@@ -60,23 +53,15 @@ public class RockPaperScissorsGUI extends JFrame {
             PlayerProfile newProfile = createNewProfile();
             if (newProfile != null) {
                 gameApp.setActiveProfile(newProfile);
-                textArea.append("Profile Created: " + newProfile.getUsername() + "\n");
-                Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
-                if (window instanceof Dialog) {
-                    window.dispose();
-                }
-                mainMenu();
+                statusMessageLabel.setText("The " + newProfile.getUsername() + " profile has been successfully created");
+                updateProfilesList();
             }
         });
 
         // Listener for the "Delete" button
         deleteButton.addActionListener(e -> {
             deleteProfile();
-            Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
-            if (window instanceof Dialog) {
-                window.dispose();
-            }
-            mainMenu();
+            updateProfilesList();
         });
 
         // Listener for the "Cancel" button
@@ -90,17 +75,20 @@ public class RockPaperScissorsGUI extends JFrame {
         leaderboardPanel.add(leaderboardButton);
 
         // Panel for the action buttons without vertical spacing
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonsPanel.add(selectButton);
         buttonsPanel.add(createNewButton);
         buttonsPanel.add(deleteButton);
         buttonsPanel.add(cancelButton);
+
+        JPanel statusMessagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        statusMessagePanel.add(statusMessageLabel);
 
         // Main panel with GridLayout to structure the layout
         JPanel mainPanel = new JPanel(new GridLayout(4, 1, 0, 5)); // 4 rows, 1 column, no hgap, 5 vgap
         mainPanel.add(comboBox);
         mainPanel.add(leaderboardPanel);
         mainPanel.add(buttonsPanel);
+        mainPanel.add(statusMessageLabel);
 
         // Display the profile selection dialog
         int result = JOptionPane.showOptionDialog(
@@ -118,6 +106,19 @@ public class RockPaperScissorsGUI extends JFrame {
         }
         // No further action is taken here since the action listeners will handle it
     }
+
+    private void updateProfilesList() {
+        List<PlayerProfile> profiles = profileManager.getProfiles();
+        comboBox.removeAllItems();
+        for (PlayerProfile profile : profiles) {
+            comboBox.addItem(profile);
+        }
+        if (profiles.isEmpty()) {
+            createNewProfile();
+            updateProfilesList();
+        }
+    }
+
     private PlayerProfile createNewProfile() {
         String username;
         while (true) {
@@ -148,7 +149,7 @@ public class RockPaperScissorsGUI extends JFrame {
 
         if (selectedProfile != null) {
             profileManager.deleteProfile(selectedProfile.getId());
-            textArea.append("Profile Deleted: " + selectedProfile.getUsername() + "\n");
+            statusMessageLabel.setText("The " + selectedProfile.getUsername() + " profile has been successfully deleted");
         }
     }
 
@@ -198,6 +199,7 @@ public class RockPaperScissorsGUI extends JFrame {
         setTitle("Rock, Paper, Scissors Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 600);
+        setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
