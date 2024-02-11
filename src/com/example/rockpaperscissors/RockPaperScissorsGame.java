@@ -1,14 +1,15 @@
 package com.example.rockpaperscissors;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RockPaperScissorsGame {
-    private int wins = 0;
-    private int losses = 0;
-    private int ties = 0;
+    private int sessionWins = 0;
+    private int sessionLosses = 0;
+    private int sessionTies = 0;
 
     private final ProfileManager profileManager;
     private PlayerProfile activeProfile;
+    private static final Move[] MOVES = Move.values();
 
 
 
@@ -18,12 +19,6 @@ public class RockPaperScissorsGame {
 
     public void setActiveProfile(PlayerProfile profile) {
         this.activeProfile = profile;
-        // Setting local variables based on the profile
-        if (profile != null) {
-            wins = profile.getWins();
-            losses = profile.getLosses();
-            ties = profile.getTies();
-        }
     }
 
     public enum Move {
@@ -62,14 +57,12 @@ public class RockPaperScissorsGame {
             case TIE -> "It's a tie!";
         };
 
-        return String.format("You chose %s, computer chose %s. %s\nWins: %d, Losses: %d, Ties: %d\n",
-                playerMove, computerMove, resultMessage,
-                activeProfile.getWins(), activeProfile.getLosses(), activeProfile.getTies());
+        return String.format("You chose %s, computer chose %s. %s",
+                playerMove, computerMove, resultMessage);
     }
 
     private Move getRandomMove() {
-        Random random = new Random();
-        return Move.values()[random.nextInt(Move.values().length)];
+        return MOVES[ThreadLocalRandom.current().nextInt(MOVES.length)];
     }
 
     private GameResult determineWinner(Move playerMove, Move computerMove) {
@@ -93,15 +86,23 @@ public class RockPaperScissorsGame {
             case WIN -> {
                 activeProfile.setWins(activeProfile.getWins() + 1);
                 profileManager.updateWins(activeProfile.getId());
+                sessionWins++;
             }
             case LOSE -> {
                 activeProfile.setLosses(activeProfile.getLosses() + 1);
                 profileManager.updateLosses(activeProfile.getId());
+                sessionLosses++;
             }
             case TIE -> {
                 activeProfile.setTies(activeProfile.getTies() + 1);
                 profileManager.updateTies(activeProfile.getId());
+                sessionTies++;
             }
         }
+    }
+    public void resetSessionStats() {
+        sessionWins = 0;
+        sessionLosses = 0;
+        sessionTies = 0;
     }
 }

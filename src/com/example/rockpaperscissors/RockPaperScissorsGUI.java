@@ -198,6 +198,7 @@ public class RockPaperScissorsGUI extends JFrame {
     }
 
     private void initializeGameGUI() {
+        gameApp.resetSessionStats();
         textArea.setText("");
         setTitle("Rock, Paper, Scissors Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
