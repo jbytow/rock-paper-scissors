@@ -10,6 +10,7 @@ public class RockPaperScissorsGUI extends JFrame {
     private final JTextArea textArea;
     private final ProfileManager profileManager;
     private final JLabel statusMessageLabel;
+    private final JLabel selectedProfileLabel;
     private final JComboBox<PlayerProfile> comboBox;
     // Constructor initializes the game and profile manager, and sets up the main menu
 
@@ -20,6 +21,7 @@ public class RockPaperScissorsGUI extends JFrame {
         textArea.setEditable(false);
         statusMessageLabel = new JLabel();
         statusMessageLabel.setHorizontalAlignment(JLabel.CENTER);
+        selectedProfileLabel = new JLabel("No profile selected", JLabel.CENTER);
         comboBox = new JComboBox<>();
         mainMenu(); // Start by displaying the main menu
     }
@@ -45,6 +47,7 @@ public class RockPaperScissorsGUI extends JFrame {
                     window.dispose();
                 }
                 initializeGameGUI();
+                selectedProfileLabel.setText("Profile Selected: " + selectedProfile.getUsername());
             }
         });
 
@@ -115,7 +118,6 @@ public class RockPaperScissorsGUI extends JFrame {
         }
         if (profiles.isEmpty()) {
             createNewProfile();
-            updateProfilesList();
         }
     }
 
@@ -123,8 +125,8 @@ public class RockPaperScissorsGUI extends JFrame {
         String username;
         while (true) {
             username = JOptionPane.showInputDialog("Enter new profile name:");
-            if (username == null) {
-                System.exit(0); // Close the app if the user clicks "Cancel"
+            if (username == null || username.trim().isEmpty()) {
+                return null;
             } else if (username.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Please enter a valid profile name.", "Invalid Name", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -133,6 +135,7 @@ public class RockPaperScissorsGUI extends JFrame {
         }
 
         profileManager.createProfile(username);
+        updateProfilesList();
         return profileManager.selectProfileByName(username);
     }
 
@@ -216,6 +219,8 @@ public class RockPaperScissorsGUI extends JFrame {
             this.setVisible(false); // Hide the game window
             mainMenu(); // Show the main menu again
         });
+
+        getContentPane().add(selectedProfileLabel, BorderLayout.SOUTH);
 
         panel.add(rockButton);
         panel.add(paperButton);
