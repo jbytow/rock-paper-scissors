@@ -11,7 +11,39 @@ public class RockPaperScissorsGame {
     private PlayerProfile activeProfile;
     private static final Move[] MOVES = Move.values();
 
+    public int getSessionWins() {
+        return sessionWins;
+    }
 
+    public void setSessionWins(int sessionWins) {
+        this.sessionWins = sessionWins;
+    }
+
+    public int getSessionLosses() {
+        return sessionLosses;
+    }
+
+    public void setSessionLosses(int sessionLosses) {
+        this.sessionLosses = sessionLosses;
+    }
+
+    public int getSessionTies() {
+        return sessionTies;
+    }
+
+    public void setSessionTies(int sessionTies) {
+        this.sessionTies = sessionTies;
+    }
+
+    public int getActiveProfileWins() {
+        return activeProfile != null ? activeProfile.getWins() : 0;
+    }
+    public int getActiveProfileLosses() {
+        return activeProfile != null ? activeProfile.getLosses() : 0;
+    }
+    public int getActiveProfileTies() {
+        return activeProfile != null ? activeProfile.getTies() : 0;
+    }
 
     public RockPaperScissorsGame(ProfileManager profileManager) {
         this.profileManager = profileManager;
@@ -57,7 +89,7 @@ public class RockPaperScissorsGame {
             case TIE -> "It's a tie!";
         };
 
-        return String.format("You chose %s, computer chose %s. %s",
+        return String.format("You chose %s, computer chose %s. %s\n",
                 playerMove, computerMove, resultMessage);
     }
 

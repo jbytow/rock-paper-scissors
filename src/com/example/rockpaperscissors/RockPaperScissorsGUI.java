@@ -10,6 +10,8 @@ public class RockPaperScissorsGUI extends JFrame {
     private final JTextArea textArea;
     private final ProfileManager profileManager;
     private final JLabel statusMessageLabel;
+    private JLabel sessionStatsLabel;
+    private JLabel totalStatsLabel;
     private final JLabel selectedProfileLabel;
     private final JComboBox<PlayerProfile> comboBox;
     // Constructor initializes the game and profile manager, and sets up the main menu
@@ -21,6 +23,8 @@ public class RockPaperScissorsGUI extends JFrame {
         textArea.setEditable(false);
         statusMessageLabel = new JLabel();
         statusMessageLabel.setHorizontalAlignment(JLabel.CENTER);
+        sessionStatsLabel = new JLabel("Session Stats: Wins: 0, Losses: 0, Ties: 0", JLabel.CENTER);
+        totalStatsLabel = new JLabel("Total Stats: Wins: 0, Losses: 0, Ties: 0, Win%: 0.00%", JLabel.CENTER);
         selectedProfileLabel = new JLabel("No profile selected", JLabel.CENTER);
         comboBox = new JComboBox<>();
         mainMenu(); // Start by displaying the main menu
@@ -47,6 +51,7 @@ public class RockPaperScissorsGUI extends JFrame {
                     window.dispose();
                 }
                 initializeGameGUI();
+                updateStatsDisplay();
                 selectedProfileLabel.setText("Profile Selected: " + selectedProfile.getUsername());
             }
         });
@@ -205,13 +210,32 @@ public class RockPaperScissorsGUI extends JFrame {
         setSize(400, 600);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
+        // Create a panel to group the profile and stats labels
+        JPanel profileAndStatsPanel = new JPanel();
+        profileAndStatsPanel.setLayout(new BoxLayout(profileAndStatsPanel, BoxLayout.Y_AXIS));
+
+        // Add the selected profile label
+        selectedProfileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        profileAndStatsPanel.add(selectedProfileLabel);
+
+        // Add the session stats label
+        sessionStatsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        profileAndStatsPanel.add(sessionStatsLabel);
+
+        // Add the total stats label
+        totalStatsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        profileAndStatsPanel.add(totalStatsLabel);
+
+        // Add the panel to the NORTH region of the content pane
+        getContentPane().add(profileAndStatsPanel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
 
         JButton rockButton = new JButton("Rock");
         JButton paperButton = new JButton("Paper");
         JButton scissorsButton = new JButton("Scissors");
-        JButton backButton = new JButton("Back to Main Menu"); // Add a back button
+        JButton backButton = new JButton("Back to Main Menu");
 
         rockButton.addActionListener(e -> playGame("rock"));
         paperButton.addActionListener(e -> playGame("paper"));
@@ -221,21 +245,41 @@ public class RockPaperScissorsGUI extends JFrame {
             mainMenu(); // Show the main menu again
         });
 
-        getContentPane().add(selectedProfileLabel, BorderLayout.SOUTH);
+        buttonPanel.add(rockButton);
+        buttonPanel.add(paperButton);
+        buttonPanel.add(scissorsButton);
+        buttonPanel.add(backButton);
 
-        panel.add(rockButton);
-        panel.add(paperButton);
-        panel.add(scissorsButton);
-        panel.add(backButton); // Add the back button to the panel
-
-        getContentPane().add(panel, BorderLayout.NORTH);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
         getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
 
         setVisible(true);
     }
 
+    private void updateStatsDisplay() {
+        // Assuming getSessionWins, getSessionLosses, and getSessionTies are implemented in RockPaperScissorsGame
+        int sessionWins = gameApp.getSessionWins();
+        int sessionLosses = gameApp.getSessionLosses();
+        int sessionTies = gameApp.getSessionTies();
+        double sessionWinPercentage = calculateWinPercentage(sessionWins, sessionLosses, sessionTies);
+        sessionStatsLabel.setText(String.format("Session Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%", sessionWins, sessionLosses, sessionTies, sessionWinPercentage));
+
+        // Utilizing direct accessor methods instead of accessing the active profile directly
+        int totalWins = gameApp.getActiveProfileWins();
+        int totalLosses = gameApp.getActiveProfileLosses();
+        int totalTies = gameApp.getActiveProfileTies();
+        double totalWinPercentage = calculateWinPercentage(totalWins, totalLosses, totalTies);
+        totalStatsLabel.setText(String.format("Total Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%", totalWins, totalLosses, totalTies, totalWinPercentage));
+    }
+
+    private double calculateWinPercentage(int wins, int losses, int ties) {
+        int totalGames = wins + losses + ties;
+        return totalGames > 0 ? (double) wins / totalGames * 100 : 0;
+    }
+
     private void playGame(String playerMove) {
         String result = gameApp.playGame(playerMove);
         textArea.append(result);
+        updateStatsDisplay();
     }
 }
