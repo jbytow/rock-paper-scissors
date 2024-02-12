@@ -10,8 +10,8 @@ public class RockPaperScissorsGUI extends JFrame {
     private final JTextArea textArea;
     private final ProfileManager profileManager;
     private final JLabel statusMessageLabel;
-    private JLabel sessionStatsLabel;
-    private JLabel totalStatsLabel;
+    private final JLabel sessionStatsLabel;
+    private final JLabel totalStatsLabel;
     private final JLabel selectedProfileLabel;
     private final JComboBox<PlayerProfile> comboBox;
     // Constructor initializes the game and profile manager, and sets up the main menu
@@ -45,14 +45,12 @@ public class RockPaperScissorsGUI extends JFrame {
             PlayerProfile selectedProfile = (PlayerProfile) comboBox.getSelectedItem();
             if (selectedProfile != null) {
                 gameApp.setActiveProfile(selectedProfile);
-                textArea.append("Profile Selected: " + selectedProfile.getUsername() + "\n");
                 Window window = SwingUtilities.getWindowAncestor((Component) e.getSource());
                 if (window instanceof JDialog) {
                     window.dispose();
                 }
                 initializeGameGUI();
-                updateStatsDisplay();
-                selectedProfileLabel.setText("Profile Selected: " + selectedProfile.getUsername());
+                updateProfileDisplay();
             }
         });
 
@@ -127,17 +125,15 @@ public class RockPaperScissorsGUI extends JFrame {
     }
 
     private PlayerProfile createNewProfile() {
-        String username;
-        while (true) {
-            username = JOptionPane.showInputDialog("Enter new profile name:");
-            if (username == null || username.trim().isEmpty()) {
-                return null;
-            } else if (username.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please enter a valid profile name.", "Invalid Name", JOptionPane.ERROR_MESSAGE);
-            } else {
-                break;
+            String username;
+            while (true) {
+                username = JOptionPane.showInputDialog("Enter new profile name:");
+                if (username == null || username.trim().isEmpty()) {
+                    return null; // Exiting the method if user cancels or inputs an empty name
+                } else {
+                    break; // Exit the loop since we have a valid username
+                }
             }
-        }
 
         profileManager.createProfile(username);
         updateProfilesList();
@@ -203,6 +199,7 @@ public class RockPaperScissorsGUI extends JFrame {
     }
 
     private void initializeGameGUI() {
+        getContentPane().removeAll();
         gameApp.resetSessionStats();
         textArea.setText("");
         setTitle("Rock, Paper, Scissors Game");
@@ -254,22 +251,35 @@ public class RockPaperScissorsGUI extends JFrame {
         getContentPane().add(new JScrollPane(textArea), BorderLayout.CENTER);
 
         setVisible(true);
+
+        getContentPane().validate();
+        getContentPane().repaint();
     }
 
-    private void updateStatsDisplay() {
-        // Assuming getSessionWins, getSessionLosses, and getSessionTies are implemented in RockPaperScissorsGame
+    private void updateProfileDisplay() {
+        // Update session stats
         int sessionWins = gameApp.getSessionWins();
         int sessionLosses = gameApp.getSessionLosses();
         int sessionTies = gameApp.getSessionTies();
         double sessionWinPercentage = calculateWinPercentage(sessionWins, sessionLosses, sessionTies);
-        sessionStatsLabel.setText(String.format("Session Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%", sessionWins, sessionLosses, sessionTies, sessionWinPercentage));
+        sessionStatsLabel.setText(String.format("Session Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%",
+                sessionWins, sessionLosses, sessionTies, sessionWinPercentage));
 
-        // Utilizing direct accessor methods instead of accessing the active profile directly
+        // Update total stats
         int totalWins = gameApp.getActiveProfileWins();
         int totalLosses = gameApp.getActiveProfileLosses();
         int totalTies = gameApp.getActiveProfileTies();
         double totalWinPercentage = calculateWinPercentage(totalWins, totalLosses, totalTies);
-        totalStatsLabel.setText(String.format("Total Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%", totalWins, totalLosses, totalTies, totalWinPercentage));
+        totalStatsLabel.setText(String.format("Total Stats: Wins: %d, Losses: %d, Ties: %d, Win%%: %.2f%%",
+                totalWins, totalLosses, totalTies, totalWinPercentage));
+
+        // Update the selected profile label
+        PlayerProfile activeProfile = gameApp.getActiveProfile();
+        if (activeProfile != null) {
+            selectedProfileLabel.setText("Profile Selected: " + activeProfile.getUsername());
+        } else {
+            selectedProfileLabel.setText("No profile selected");
+        }
     }
 
     private double calculateWinPercentage(int wins, int losses, int ties) {
@@ -280,6 +290,6 @@ public class RockPaperScissorsGUI extends JFrame {
     private void playGame(String playerMove) {
         String result = gameApp.playGame(playerMove);
         textArea.append(result);
-        updateStatsDisplay();
+        updateProfileDisplay();
     }
 }

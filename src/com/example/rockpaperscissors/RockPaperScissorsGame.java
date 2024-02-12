@@ -53,6 +53,10 @@ public class RockPaperScissorsGame {
         this.activeProfile = profile;
     }
 
+    public PlayerProfile getActiveProfile() {
+        return activeProfile;
+    }
+
     public enum Move {
         ROCK, PAPER, SCISSORS;
 
