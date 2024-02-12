@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.example.rockpaperscissors.database;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

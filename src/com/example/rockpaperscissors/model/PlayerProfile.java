@@ -1,4 +1,4 @@
-package com.example.rockpaperscissors;
+package com.example.rockpaperscissors.model;
 
 public class PlayerProfile {
     private final int id;

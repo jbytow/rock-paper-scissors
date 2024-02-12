@@ -1,4 +1,8 @@
-package com.example.rockpaperscissors;
+package com.example.rockpaperscissors.ui;
+
+import com.example.rockpaperscissors.game.RockPaperScissorsGame;
+import com.example.rockpaperscissors.manager.ProfileManager;
+import com.example.rockpaperscissors.model.PlayerProfile;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

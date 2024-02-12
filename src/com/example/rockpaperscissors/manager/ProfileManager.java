@@ -1,4 +1,6 @@
-package com.example.rockpaperscissors;
+package com.example.rockpaperscissors.manager;
+
+import com.example.rockpaperscissors.model.PlayerProfile;
 
 import java.sql.*;
 import java.util.ArrayList;

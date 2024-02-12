@@ -1,4 +1,7 @@
-package com.example.rockpaperscissors;
+package com.example.rockpaperscissors.game;
+
+import com.example.rockpaperscissors.manager.ProfileManager;
+import com.example.rockpaperscissors.model.PlayerProfile;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -56,24 +59,6 @@ public class RockPaperScissorsGame {
     public PlayerProfile getActiveProfile() {
         return activeProfile;
     }
-
-    public enum Move {
-        ROCK, PAPER, SCISSORS;
-
-        public static Move fromString(String move) {
-            return switch (move.toLowerCase()) {
-                case "rock" -> ROCK;
-                case "paper" -> PAPER;
-                case "scissors" -> SCISSORS;
-                default -> throw new IllegalArgumentException("Invalid move: " + move);
-            };
-        }
-    }
-
-    public enum GameResult {
-        WIN, LOSE, TIE
-    }
-
 
     public String playGame(String playerMoveString) {
         Move playerMove = Move.fromString(playerMoveString);
