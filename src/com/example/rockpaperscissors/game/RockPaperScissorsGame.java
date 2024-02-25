@@ -18,24 +18,12 @@ public class RockPaperScissorsGame {
         return sessionWins;
     }
 
-    public void setSessionWins(int sessionWins) {
-        this.sessionWins = sessionWins;
-    }
-
     public int getSessionLosses() {
         return sessionLosses;
     }
 
-    public void setSessionLosses(int sessionLosses) {
-        this.sessionLosses = sessionLosses;
-    }
-
     public int getSessionTies() {
         return sessionTies;
-    }
-
-    public void setSessionTies(int sessionTies) {
-        this.sessionTies = sessionTies;
     }
 
     public int getActiveProfileWins() {
@@ -69,7 +57,6 @@ public class RockPaperScissorsGame {
         if (activeProfile != null) {
             updateProfileStats(result);
         }
-
 
         // Generate result message
         String resultMessage = switch (result) {
