@@ -9,4 +9,5 @@ Simple Rock Paper Scissors game to go through the basics od Java
 
 ## Built With
 * Java
+* Swing
 * SQLite jdbc
